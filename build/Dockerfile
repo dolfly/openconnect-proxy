@@ -52,8 +52,5 @@ COPY --chmod=755 tunnel-gate.sh /usr/local/bin/tunnel-gate.sh
 
 EXPOSE 8888 8889
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD sh -c 'ip -o link show dev "${TUNNEL_GATE_INTERFACE:-tun0}" 2>/dev/null \
-                 | grep -Eq "[<,]UP[,>]" \
-               && ss -lnt "sport = :${PROXY_PORT:-8888}" | grep -q LISTEN \
-               && ss -lnt "sport = :${SOCKS_PORT:-8889}" | grep -q LISTEN' || exit 1
+    CMD ["sh", "-c", "ip -o link show dev \"${TUNNEL_GATE_INTERFACE:-tun0}\" 2>/dev/null | grep -Eq '[<,]UP[,>]' && ss -lnt \"sport = :${PROXY_PORT:-8888}\" | grep -q LISTEN && ss -lnt \"sport = :${SOCKS_PORT:-8889}\" | grep -q LISTEN"]
 ENTRYPOINT ["/usr/local/bin/fix-dns", "/entrypoint.sh"]
